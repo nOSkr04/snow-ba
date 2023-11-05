@@ -54,10 +54,6 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       default: "Pending",
     },
-    orderStatus: {
-      type: [String],
-      required: true,
-    },
     deadline: {
       type: Date,
       required: true,

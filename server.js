@@ -42,6 +42,7 @@ var whitelist = [
   "http://192.168.1.8:3000",
   "https://seduadmin.vercel.app",
   "https://www.seduadmin.vercel.app",
+  "https://snow-fe.vercel.app",
 ];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно

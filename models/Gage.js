@@ -4,6 +4,7 @@ const GageSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      unique: true,
     },
     createUser: {
       type: mongoose.Schema.ObjectId,

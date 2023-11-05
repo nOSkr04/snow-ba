@@ -4,6 +4,7 @@ const CustomerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      unique: true,
     },
     location: {
       type: String,

@@ -11,7 +11,6 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 
 export const uploadPhoto = asyncHandler(async (req, res, next) => {
-  console.log(JSON.stringify(req.files), "wp");
   const file = req.files.file;
 
   const blurHash = await setBlurHash(file.data);

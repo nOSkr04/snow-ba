@@ -23,6 +23,9 @@ import connectDB from "./config/db.js";
 import usersRoutes from "./routes/users.js";
 import mediasRoutes from "./routes/media.js";
 import plysRoutes from "./routes/plys.js";
+import materialsRoutes from "./routes/materials.js";
+import sizesRoutes from "./routes/sizes.js";
+import knitUsersRoutes from "./routes/knitUsers.js";
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
@@ -37,11 +40,8 @@ connectDB();
 // Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :
 var whitelist = [
   "http://localhost:3000",
-  "https://www.sedu.mn",
-  "https://sedu.mn",
+  "http://localhost:3001",
   "http://192.168.1.8:3000",
-  "https://seduadmin.vercel.app",
-  "https://www.seduadmin.vercel.app",
   "https://snow-fe.vercel.app",
 ];
 
@@ -109,6 +109,9 @@ app.use("/v1/customers", customersRoutes);
 app.use("/v1/modelTypes", modelTypesRoutes);
 app.use("/v1/gages", gagesRoutes);
 app.use("/v1/plys", plysRoutes);
+app.use("/v1/materials", materialsRoutes);
+app.use("/v1/sizes", sizesRoutes);
+app.use("/v1/knitUsers", knitUsersRoutes);
 // Алдаа үүсэхэд барьж авч алдааны мэдээллийг клиент тал руу автоматаар мэдээлнэ
 app.use(errorHandler);
 

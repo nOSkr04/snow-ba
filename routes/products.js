@@ -7,10 +7,15 @@ import {
   createProduct,
   deleteProduct,
   updateProduct,
+  productDetails,
+  getKnitProducts,
+  createKnitTask,
 } from "../controller/products.js";
 
 const router = Router();
-
+router.route("/knit").get(getKnitProducts);
+router.route("/knit/:id").post(createKnitTask);
+router.route("/detail").get(productDetails);
 //"/api/v1/products"
 router
   .route("/")

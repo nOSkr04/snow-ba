@@ -33,6 +33,16 @@ const ProductSchema = new mongoose.Schema(
       ref: "Gage",
       required: true,
     },
+    size: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Size",
+      required: true,
+    },
+    material: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Material",
+      required: true,
+    },
     ply: {
       type: mongoose.Schema.ObjectId,
       ref: "Ply",
@@ -65,6 +75,28 @@ const ProductSchema = new mongoose.Schema(
     updateUser: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
+    },
+    knitStatus: {
+      type: String,
+      default: "Pending",
+    },
+    knitUsers: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "KnitUser",
+      },
+    ],
+    knitResidualCount: {
+      type: Number,
+      default: 0,
+    },
+    knitGrantedCount: {
+      type: Number,
+      default: 0,
+    },
+    knitEndCount: {
+      type: Number,
+      default: 0,
     },
 
     createdAt: {

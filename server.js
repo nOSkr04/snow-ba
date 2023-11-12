@@ -26,6 +26,7 @@ import plysRoutes from "./routes/plys.js";
 import materialsRoutes from "./routes/materials.js";
 import sizesRoutes from "./routes/sizes.js";
 import knitUsersRoutes from "./routes/knitUsers.js";
+import knitRoutes from "./routes/knits.js";
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
@@ -112,6 +113,7 @@ app.use("/v1/plys", plysRoutes);
 app.use("/v1/materials", materialsRoutes);
 app.use("/v1/sizes", sizesRoutes);
 app.use("/v1/knitUsers", knitUsersRoutes);
+app.use("/v1/knit", knitRoutes);
 // Алдаа үүсэхэд барьж авч алдааны мэдээллийг клиент тал руу автоматаар мэдээлнэ
 app.use(errorHandler);
 

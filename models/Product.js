@@ -76,6 +76,12 @@ const ProductSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    knit: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Knit",
+      },
+    ],
     knitStatus: {
       type: String,
       default: "Pending",

@@ -10,11 +10,12 @@ import {
   productDetails,
   getKnitProducts,
   createKnitTask,
+  getKnitProcess,
 } from "../controller/products.js";
 
 const router = Router();
 router.route("/knit").get(getKnitProducts);
-router.route("/knit/:id").post(createKnitTask);
+router.route("/knit/:id").get(getKnitProcess).post(createKnitTask);
 router.route("/detail").get(productDetails);
 //"/api/v1/products"
 router

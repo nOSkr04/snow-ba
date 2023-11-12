@@ -11,6 +11,7 @@ import Customer from "../models/Customer.js";
 import Material from "../models/Material.js";
 import Size from "../models/Size.js";
 import KnitUser from "../models/KnitUser.js";
+import Knit from "../models/Knit.js";
 
 // api/v1/products
 export const getProducts = asyncHandler(async (req, res, next) => {
@@ -48,7 +49,16 @@ export const getKnitProducts = asyncHandler(async (req, res, next) => {
     .sort(sort)
     .skip(pagination.start - 1)
     .limit(limit)
-    .populate(["size", "knitUsers", "material", "modelType", "gage", "ply"]);
+    .populate([
+      "size",
+      "knitUsers",
+      "material",
+      "modelType",
+      "gage",
+      "ply",
+      "knit",
+      { path: "knit", populate: { path: "user" } },
+    ]);
   res.status(200).json({
     success: true,
     count: products.length,
@@ -57,19 +67,64 @@ export const getKnitProducts = asyncHandler(async (req, res, next) => {
   });
 });
 
+export const getKnitProcess = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id).populate([
+    "knit",
+    { path: "knit", populate: { path: "user" } },
+  ]);
+
+  if (!product) {
+    throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
+  }
+
+  const typeOrder = ["accept", "done" /* add other values as needed */];
+
+  // Sort the knit array based on the 'type' property and createdAt
+  product.knit.sort((a, b) => {
+    const aIndex = typeOrder.indexOf(a.type);
+    const bIndex = typeOrder.indexOf(b.type);
+
+    // Compare type indices first
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex;
+    }
+
+    // If types are equal, sort by createdAt (latest first)
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  res.status(200).json({
+    success: true,
+    data: product,
+  });
+});
+
 export const createKnitTask = asyncHandler(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   const knitUser = await KnitUser.findById(req.body.knitUsers);
+  const knit = await Knit.create({
+    type: "accept",
+    createUser: req.userId,
+    quantity: req.body.quantity,
+    user: req.body.knitUsers,
+    product: req.params.id,
+  });
 
   if (!product) {
-    throw new MyError(req.params.id + " ID-тэй ном байхгүйээээ.", 400);
+    throw new MyError(req.params.id + " ID-тэй захиалга байхгүй.", 400);
+  }
+
+  if (product.knitResidualCount < req.body.quantity) {
+    throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
   }
 
   knitUser.accept = req.body.quantity + knitUser.accept;
   product.knitGrantedCount = req.body.quantity + product.knitGrantedCount;
+  product.knitResidualCount = product.knitResidualCount - req.body.quantity;
   product.status = "Processing";
   product.knitStatus = "Processing";
   product.knitUsers = [...product.knitUsers, req.body.knitUsers];
+  product.knit = [...product.knit, knit._id];
   product.save();
   knitUser.save();
   res.status(200).json({

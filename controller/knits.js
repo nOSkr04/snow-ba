@@ -5,6 +5,8 @@ import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
 import User from "../models/User.js";
 import Product from "../models/Product.js";
+import KnitUser from "../models/KnitUser.js";
+import KnitHistory from "../models/KnitHistory.js";
 
 // api/v1/knits
 export const getKnits = asyncHandler(async (req, res, next) => {
@@ -36,9 +38,6 @@ export const getKnit = asyncHandler(async (req, res, next) => {
   if (!knit) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
-
-  knit.seen += 1;
-  knit.save();
 
   res.status(200).json({
     success: true,
@@ -81,7 +80,6 @@ export const deleteKnit = asyncHandler(async (req, res, next) => {
 
 export const acceptKnit = asyncHandler(async (req, res, next) => {
   const knit = await Knit.findById(req.params.id);
-  const product = await Product.findById(req.body.product);
 
   if (!knit) {
     throw new MyError(
@@ -89,13 +87,19 @@ export const acceptKnit = asyncHandler(async (req, res, next) => {
       404
     );
   }
-
+  const knitHistory = await KnitHistory.findById(req.body.knitLink);
+  const product = await Product.findById(req.body.product);
+  const knitUser = await KnitUser.findById(req.body.userId);
+  knitHistory.complete = knit.quantity;
+  knitUser.completed = knit.quantity;
   product.knitEndCount = product.knitEndCount + knit.quantity;
   product.knitGrantedCount = product.knitGrantedCount - knit.quantity;
   if (product.quantity === product.knitEndCount) {
     product.knitStatus = "Completed";
   }
   knit.type = "done";
+  knitHistory.save();
+  knitUser.save();
   knit.save();
   product.save();
 

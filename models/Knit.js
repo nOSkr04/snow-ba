@@ -29,6 +29,7 @@ const KnitSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    knitLink: String,
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

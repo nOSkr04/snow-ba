@@ -7,6 +7,9 @@ const ProductSchema = new mongoose.Schema(
       ref: "Customer",
       required: true,
     },
+    customerType: {
+      type: String,
+    },
     modelNomer: {
       type: String,
       required: true,
@@ -17,10 +20,6 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     colorCode: {
-      type: String,
-      required: true,
-    },
-    colorLength: {
       type: String,
       required: true,
     },

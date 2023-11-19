@@ -20,6 +20,12 @@ const KnitUserSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    workHistory: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "KnitHistory",
+      },
+    ],
     createUser: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

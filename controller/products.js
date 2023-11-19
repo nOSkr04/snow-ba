@@ -12,6 +12,7 @@ import Material from "../models/Material.js";
 import Size from "../models/Size.js";
 import KnitUser from "../models/KnitUser.js";
 import Knit from "../models/Knit.js";
+import KnitHistory from "../models/KnitHistory.js";
 
 // api/v1/products
 export const getProducts = asyncHandler(async (req, res, next) => {
@@ -52,7 +53,6 @@ export const getKnitProducts = asyncHandler(async (req, res, next) => {
     .populate([
       "size",
       "knitUsers",
-      "material",
       "modelType",
       "gage",
       "ply",
@@ -101,14 +101,6 @@ export const getKnitProcess = asyncHandler(async (req, res) => {
 
 export const createKnitTask = asyncHandler(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
-  const knitUser = await KnitUser.findById(req.body.knitUsers);
-  const knit = await Knit.create({
-    type: "accept",
-    createUser: req.userId,
-    quantity: req.body.quantity,
-    user: req.body.knitUsers,
-    product: req.params.id,
-  });
 
   if (!product) {
     throw new MyError(req.params.id + " ID-тэй захиалга байхгүй.", 400);
@@ -117,7 +109,24 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
   if (product.knitResidualCount < req.body.quantity) {
     throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
   }
+  const knitUser = await KnitUser.findById(req.body.knitUsers);
 
+  const knitHistory = await KnitHistory.create({
+    product: product._id,
+    count: req.body.quantity,
+    user: knitUser._id,
+  });
+
+  const knit = await Knit.create({
+    type: "accept",
+    createUser: req.userId,
+    quantity: req.body.quantity,
+    user: req.body.knitUsers,
+    product: req.params.id,
+    knitLink: knitHistory._id,
+  });
+
+  knitUser.workHistory = [...knitUser.workHistory, knitHistory._id];
   knitUser.accept = req.body.quantity + knitUser.accept;
   product.knitGrantedCount = req.body.quantity + product.knitGrantedCount;
   product.knitResidualCount = product.knitResidualCount - req.body.quantity;

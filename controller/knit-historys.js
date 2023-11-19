@@ -1,74 +1,69 @@
-import KnitUser from "../models/KnitUser.js";
+import KnitHistory from "../models/KnitHistory.js";
 import path from "path";
 import MyError from "../utils/myError.js";
 import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
 import User from "../models/User.js";
 
-// api/v1/knitUsers
-export const getKnitUsers = asyncHandler(async (req, res, next) => {
+// api/v1/knitHistorys
+export const getKnitHistorys = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const sort = req.query.sort;
   const select = req.query.select;
 
   [("select", "sort", "page", "limit")].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, KnitUser);
+  const pagination = await paginate(page, limit, KnitHistory);
 
-  const knitUsers = await KnitUser.find(req.query, select)
+  const knitHistorys = await KnitHistory.find(req.query, select)
     .sort(sort)
     .skip(pagination.start - 1)
     .limit(limit);
 
   res.status(200).json({
     success: true,
-    count: knitUsers.length,
-    data: knitUsers,
+    count: knitHistorys.length,
+    data: knitHistorys,
     pagination,
   });
 });
 
-export const getKnitUser = asyncHandler(async (req, res, next) => {
-  const knitUser = await KnitUser.findById(req.params.id).populate({
-    path: "workHistory",
-    populate: {
-      path: "product",
-      populate: {
-        path: "customers",
-      },
-    },
-  });
+export const getKnitHistory = asyncHandler(async (req, res, next) => {
+  const knitHistory = await KnitHistory.findById(req.params.id);
 
-  if (!knitUser) {
+  if (!knitHistory) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
+  knitHistory.seen += 1;
+  knitHistory.save();
+
   res.status(200).json({
     success: true,
-    data: knitUser,
+    data: knitHistory,
   });
 });
 
-export const createKnitUser = asyncHandler(async (req, res, next) => {
+export const createKnitHistory = asyncHandler(async (req, res, next) => {
   req.body.createUser = req.userId;
 
-  const knitUser = await KnitUser.create(req.body);
+  const knitHistory = await KnitHistory.create(req.body);
 
   res.status(200).json({
     success: true,
-    data: knitUser,
+    data: knitHistory,
   });
 });
 
-export const deleteKnitUser = asyncHandler(async (req, res, next) => {
-  const knitUser = await KnitUser.findById(req.params.id);
+export const deleteKnitHistory = asyncHandler(async (req, res, next) => {
+  const knitHistory = await KnitHistory.findById(req.params.id);
 
-  if (!knitUser) {
+  if (!knitHistory) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
   if (
-    knitUser.createUser.toString() !== req.userId &&
+    knitHistory.createUser.toString() !== req.userId &&
     req.userRole !== "admin"
   ) {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
@@ -76,24 +71,24 @@ export const deleteKnitUser = asyncHandler(async (req, res, next) => {
 
   const user = await User.findById(req.userId);
 
-  knitUser.remove();
+  knitHistory.remove();
 
   res.status(200).json({
     success: true,
-    data: knitUser,
+    data: knitHistory,
     whoDeleted: user.name,
   });
 });
 
-export const updateKnitUser = asyncHandler(async (req, res, next) => {
-  const knitUser = await KnitUser.findById(req.params.id);
+export const updateKnitHistory = asyncHandler(async (req, res, next) => {
+  const knitHistory = await KnitHistory.findById(req.params.id);
 
-  if (!knitUser) {
+  if (!knitHistory) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүйээээ.", 400);
   }
 
   if (
-    knitUser.createUser.toString() !== req.userId &&
+    knitHistory.createUser.toString() !== req.userId &&
     req.userRole !== "admin"
   ) {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
@@ -102,13 +97,13 @@ export const updateKnitUser = asyncHandler(async (req, res, next) => {
   req.body.updateUser = req.userId;
 
   for (let attr in req.body) {
-    knitUser[attr] = req.body[attr];
+    knitHistory[attr] = req.body[attr];
   }
 
-  knitUser.save();
+  knitHistory.save();
 
   res.status(200).json({
     success: true,
-    data: knitUser,
+    data: knitHistory,
   });
 });

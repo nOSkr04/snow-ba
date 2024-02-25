@@ -57,6 +57,8 @@ export const getKnitProducts = asyncHandler(async (req, res, next) => {
       "gage",
       "ply",
       "knit",
+      "customers",
+      "material",
       { path: "knit", populate: { path: "user" } },
     ]);
   res.status(200).json({

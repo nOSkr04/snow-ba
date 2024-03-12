@@ -28,6 +28,7 @@ import sizesRoutes from "./routes/sizes.js";
 import knitUsersRoutes from "./routes/knitUsers.js";
 import knitRoutes from "./routes/knits.js";
 import knitHistoryRoutes from "./routes/knit-historys.js";
+import sewRoutes from "./routes/sews.js";
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
@@ -116,6 +117,7 @@ app.use("/v1/sizes", sizesRoutes);
 app.use("/v1/knitUsers", knitUsersRoutes);
 app.use("/v1/knit", knitRoutes);
 app.use("/v1/knitHistory", knitHistoryRoutes);
+app.use("/v1/sews", sewRoutes);
 // Алдаа үүсэхэд барьж авч алдааны мэдээллийг клиент тал руу автоматаар мэдээлнэ
 app.use(errorHandler);
 

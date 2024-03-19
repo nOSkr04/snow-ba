@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 
 const SewSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      unique: true,
-    },
     product: {
       type: mongoose.Schema.ObjectId,
       ref: "Product",

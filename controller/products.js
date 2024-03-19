@@ -13,7 +13,8 @@ import Size from "../models/Size.js";
 import KnitUser from "../models/KnitUser.js";
 import Knit from "../models/Knit.js";
 import KnitHistory from "../models/KnitHistory.js";
-
+import Sew from "../models/Sew.js";
+import moment from "moment";
 // api/v1/products
 export const getProducts = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -103,20 +104,33 @@ export const getKnitProcess = asyncHandler(async (req, res) => {
 
 export const createKnitTask = asyncHandler(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
-
   if (!product) {
     throw new MyError(req.params.id + " ID-тэй захиалга байхгүй.", 400);
   }
-
   if (product.knitResidualCount < req.body.quantity) {
     throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
   }
   const knitUser = await KnitUser.findById(req.body.knitUsers);
-
   const knitHistory = await KnitHistory.create({
     product: product._id,
     count: req.body.quantity,
     user: knitUser._id,
+  });
+
+  const counts = await Sew.countDocuments({
+    createdAt: {
+      $gte: moment().startOf("month"),
+      $lte: moment().endOf("month"),
+    },
+  });
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-1);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const generate = year + month + `${counts}`.padStart(5, "0");
+  const sewsCreate = await Sew.create({
+    product: product._id,
+    knitStatus: knitHistory._id,
+    barCode: generate,
   });
 
   const knit = await Knit.create({
@@ -127,7 +141,6 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
     product: req.params.id,
     knitLink: knitHistory._id,
   });
-
   knitUser.workHistory = [...knitUser.workHistory, knitHistory._id];
   knitUser.accept = req.body.quantity + knitUser.accept;
   product.knitGrantedCount = req.body.quantity + product.knitGrantedCount;
@@ -141,6 +154,7 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: product,
+    sew: sewsCreate,
   });
 });
 

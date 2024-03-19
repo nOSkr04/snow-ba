@@ -10,6 +10,14 @@ const SewSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Product",
     },
+    knitHistory: {
+      type: mongoose.Schema.ObjectId,
+      ref: "KnitHistory",
+    },
+    barCode: {
+      type: String,
+    },
+    barcodeNumber: String,
     status: String,
     createUser: {
       type: mongoose.Schema.ObjectId,

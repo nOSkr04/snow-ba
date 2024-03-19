@@ -15,7 +15,7 @@ import {
 
 const router = Router();
 router.route("/knit").get(getKnitProducts);
-router.route("/knits").get(getKnitProcess).post(createKnitTask);
+router.route("/knit/:id").get(getKnitProcess).post(createKnitTask);
 router.route("/detail").get(productDetails);
 //"/api/v1/products"
 router

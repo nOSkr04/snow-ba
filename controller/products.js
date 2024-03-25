@@ -127,12 +127,7 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
   const year = date.getFullYear().toString().slice(-1);
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const generate = year + month + `${counts}`.padStart(5, "0");
-  const sewsCreate = await Sew.create({
-    product: product._id,
-    knitStatus: knitHistory._id,
-    barCode: generate,
-    daimond: product.daimond,
-  });
+
 
   const knit = await Knit.create({
     type: "accept",
@@ -141,6 +136,13 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
     user: req.body.knitUsers,
     product: req.params.id,
     knitLink: knitHistory._id,
+  });
+  const sewsCreate = await Sew.create({
+    product: product._id,
+    knitStatus: knitHistory._id,
+    barCode: generate,
+    daimond: product.daimond,
+    knit: knit._id
   });
   knitUser.workHistory = [...knitUser.workHistory, knitHistory._id];
   knitUser.accept = req.body.quantity + knitUser.accept;

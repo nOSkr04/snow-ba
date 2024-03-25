@@ -15,6 +15,11 @@ const SewSchema = new mongoose.Schema(
     },
     barcodeNumber: String,
     status: String,
+    daimond: String,
+    knit: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Knit",
+    },
     createUser: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

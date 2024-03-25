@@ -59,6 +59,7 @@ const ProductSchema = new mongoose.Schema(
       url: String,
       blurHash: String,
     },
+    daimond: String,
     status: {
       type: String,
       default: "Pending",

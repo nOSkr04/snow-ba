@@ -131,6 +131,7 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
     product: product._id,
     knitStatus: knitHistory._id,
     barCode: generate,
+    daimond: product.daimond,
   });
 
   const knit = await Knit.create({

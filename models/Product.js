@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ProductSchema = new mongoose.Schema(
+const OrderSchema = new mongoose.Schema(
   {
     customers: {
       type: mongoose.Schema.ObjectId,
@@ -113,4 +113,4 @@ const ProductSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-export default mongoose.model("Product", ProductSchema);
+export default mongoose.model("Order", OrderSchema);

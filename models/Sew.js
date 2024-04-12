@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const SewSchema = new mongoose.Schema(
   {
-    product: {
+    order: {
       type: mongoose.Schema.ObjectId,
-      ref: "Product",
+      ref: "Order",
     },
     knitHistory: {
       type: mongoose.Schema.ObjectId,

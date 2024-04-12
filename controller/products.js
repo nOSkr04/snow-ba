@@ -1,4 +1,4 @@
-import Product from "../models/Product.js";
+import Order from "../models/Order.js";
 import path from "path";
 import MyError from "../utils/myError.js";
 import asyncHandler from "express-async-handler";
@@ -15,39 +15,39 @@ import Knit from "../models/Knit.js";
 import KnitHistory from "../models/KnitHistory.js";
 import Sew from "../models/Sew.js";
 import moment from "moment";
-// api/v1/products
-export const getProducts = asyncHandler(async (req, res, next) => {
+// api/v1/orders
+export const getOrders = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const sort = req.query.sort;
   const select = req.query.select;
 
   [("select", "sort", "page", "limit")].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Product);
+  const pagination = await paginate(page, limit, Order);
 
-  const products = await Product.find(req.query, select)
+  const orders = await Order.find(req.query, select)
     .sort(sort)
     .skip(pagination.start - 1)
     .limit(limit)
     .populate(["gage", "modelType", "ply", "customers", "material", "size"]);
   res.status(200).json({
     success: true,
-    count: products.length,
-    data: products,
+    count: orders.length,
+    data: orders,
     pagination,
   });
 });
 
-export const getKnitProducts = asyncHandler(async (req, res, next) => {
+export const getKnitOrders = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const sort = req.query.sort;
   const select = req.query.select;
 
   [("select", "sort", "page", "limit")].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Product);
+  const pagination = await paginate(page, limit, Order);
 
-  const products = await Product.find(req.query, select)
+  const orders = await Order.find(req.query, select)
     .sort(sort)
     .skip(pagination.start - 1)
     .limit(limit)
@@ -64,26 +64,26 @@ export const getKnitProducts = asyncHandler(async (req, res, next) => {
     ]);
   res.status(200).json({
     success: true,
-    count: products.length,
-    data: products,
+    count: orders.length,
+    data: orders,
     pagination,
   });
 });
 
 export const getKnitProcess = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id).populate([
+  const order = await Order.findById(req.params.id).populate([
     "knit",
     { path: "knit", populate: { path: "user" } },
   ]);
 
-  if (!product) {
+  if (!order) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
   const typeOrder = ["accept", "done" /* add other values as needed */];
 
   // Sort the knit array based on the 'type' property and createdAt
-  product.knit.sort((a, b) => {
+  order.knit.sort((a, b) => {
     const aIndex = typeOrder.indexOf(a.type);
     const bIndex = typeOrder.indexOf(b.type);
 
@@ -98,21 +98,21 @@ export const getKnitProcess = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: product,
+    data: order,
   });
 });
 
 export const createKnitTask = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
-  if (!product) {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
     throw new MyError(req.params.id + " ID-тэй захиалга байхгүй.", 400);
   }
-  if (product.knitResidualCount < req.body.quantity) {
+  if (order.knitResidualCount < req.body.quantity) {
     throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
   }
   const knitUser = await KnitUser.findById(req.body.knitUsers);
   const knitHistory = await KnitHistory.create({
-    product: product._id,
+    order: order._id,
     count: req.body.quantity,
     user: knitUser._id,
   });
@@ -128,125 +128,118 @@ export const createKnitTask = asyncHandler(async (req, res, next) => {
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const generate = year + month + `${counts}`.padStart(5, "0");
 
-
   const knit = await Knit.create({
     type: "accept",
     createUser: req.userId,
     quantity: req.body.quantity,
     user: req.body.knitUsers,
-    product: req.params.id,
+    order: req.params.id,
     knitLink: knitHistory._id,
   });
   const sewsCreate = await Sew.create({
-    product: product._id,
+    order: order._id,
     knitStatus: knitHistory._id,
     barCode: generate,
-    daimond: product.daimond,
-    knit: knit._id
+    daimond: order.daimond,
+    knit: knit._id,
   });
   knitUser.workHistory = [...knitUser.workHistory, knitHistory._id];
   knitUser.accept = req.body.quantity + knitUser.accept;
-  product.knitGrantedCount = req.body.quantity + product.knitGrantedCount;
-  product.knitResidualCount = product.knitResidualCount - req.body.quantity;
-  product.status = "Processing";
-  product.knitStatus = "Processing";
-  product.knitUsers = [...product.knitUsers, req.body.knitUsers];
-  product.knit = [...product.knit, knit._id];
-  product.save();
+  order.knitGrantedCount = req.body.quantity + order.knitGrantedCount;
+  order.knitResidualCount = order.knitResidualCount - req.body.quantity;
+  order.status = "Processing";
+  order.knitStatus = "Processing";
+  order.knitUsers = [...order.knitUsers, req.body.knitUsers];
+  order.knit = [...order.knit, knit._id];
+  order.save();
   knitUser.save();
   res.status(200).json({
     success: true,
-    data: product,
+    data: order,
     sew: sewsCreate,
   });
 });
 
-export const getUserProducts = asyncHandler(async (req, res, next) => {
+export const getUserOrders = asyncHandler(async (req, res, next) => {
   req.query.createUser = req.userId;
-  return this.getProducts(req, res, next);
+  return this.getOrders(req, res, next);
 });
 
-export const getProduct = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+export const getOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
 
-  if (!product) {
+  if (!order) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
-  product.seen += 1;
-  product.save();
+  order.seen += 1;
+  order.save();
 
   res.status(200).json({
     success: true,
-    data: product,
+    data: order,
   });
 });
 
-export const createProduct = asyncHandler(async (req, res, next) => {
+export const createOrder = asyncHandler(async (req, res, next) => {
   req.body.createUser = req.userId;
 
-  const product = await Product.create(req.body);
+  const order = await Order.create(req.body);
 
   res.status(200).json({
     success: true,
-    data: product,
+    data: order,
   });
 });
 
-export const deleteProduct = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+export const deleteOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
 
-  if (!product) {
+  if (!order) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
-  if (
-    product.createUser.toString() !== req.userId &&
-    req.userRole !== "admin"
-  ) {
+  if (order.createUser.toString() !== req.userId && req.userRole !== "admin") {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
   }
 
   const user = await User.findById(req.userId);
 
-  product.remove();
+  order.remove();
 
   res.status(200).json({
     success: true,
-    data: product,
+    data: order,
     whoDeleted: user.name,
   });
 });
 
-export const updateProduct = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+export const updateOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
 
-  if (!product) {
+  if (!order) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүйээээ.", 400);
   }
 
-  if (
-    product.createUser.toString() !== req.userId &&
-    req.userRole !== "admin"
-  ) {
+  if (order.createUser.toString() !== req.userId && req.userRole !== "admin") {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
   }
 
   req.body.updateUser = req.userId;
 
   for (let attr in req.body) {
-    product[attr] = req.body[attr];
+    order[attr] = req.body[attr];
   }
 
-  product.save();
+  order.save();
 
   res.status(200).json({
     success: true,
-    data: product,
+    data: order,
   });
 });
 
-export const productDetails = asyncHandler(async (req, res, next) => {
+export const orderDetails = asyncHandler(async (req, res, next) => {
   const plys = await Ply.find(req.query);
   const gages = await Gage.find(req.query);
   const models = await ModelType.find(req.query);

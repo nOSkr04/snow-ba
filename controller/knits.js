@@ -4,7 +4,7 @@ import MyError from "../utils/myError.js";
 import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
 import User from "../models/User.js";
-import Product from "../models/Product.js";
+import Order from "../models/Order.js";
 import KnitUser from "../models/KnitUser.js";
 import KnitHistory from "../models/KnitHistory.js";
 
@@ -88,20 +88,20 @@ export const acceptKnit = asyncHandler(async (req, res, next) => {
     );
   }
   const knitHistory = await KnitHistory.findById(req.body.knitLink);
-  const product = await Product.findById(req.body.product);
+  const order = await Order.findById(req.body.order);
   const knitUser = await KnitUser.findById(req.body.userId);
   knitHistory.complete = knit.quantity;
   knitUser.completed = knit.quantity;
-  product.knitEndCount = product.knitEndCount + knit.quantity;
-  product.knitGrantedCount = product.knitGrantedCount - knit.quantity;
-  if (product.quantity === product.knitEndCount) {
-    product.knitStatus = "Completed";
+  order.knitEndCount = order.knitEndCount + knit.quantity;
+  order.knitGrantedCount = order.knitGrantedCount - knit.quantity;
+  if (order.quantity === order.knitEndCount) {
+    order.knitStatus = "Completed";
   }
   knit.type = "done";
   knitHistory.save();
   knitUser.save();
   knit.save();
-  product.save();
+  order.save();
 
   res.status(200).json({
     success: true,

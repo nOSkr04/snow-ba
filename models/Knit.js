@@ -9,9 +9,9 @@ const KnitSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    product: {
+    order: {
       type: mongoose.Schema.ObjectId,
-      ref: "Product",
+      ref: "Order",
     },
     user: {
       type: mongoose.Schema.ObjectId,

@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const KnitHistorySchema = new mongoose.Schema(
   {
-    product: {
+    order: {
       type: mongoose.Schema.ObjectId,
-      ref: "Product",
+      ref: "Order",
     },
     count: {
       type: Number,

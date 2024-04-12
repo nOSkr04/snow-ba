@@ -32,7 +32,7 @@ export const getKnitUser = asyncHandler(async (req, res, next) => {
   const knitUser = await KnitUser.findById(req.params.id).populate({
     path: "workHistory",
     populate: {
-      path: "product",
+      path: "order",
       populate: {
         path: "customers",
       },

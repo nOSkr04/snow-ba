@@ -14,7 +14,7 @@ import rateLimit from "express-rate-limit";
 import hpp from "hpp";
 
 // Router оруулж ирэх
-import productsRoutes from "./routes/products.js";
+import ordersRoutes from "./routes/orders.js";
 import customersRoutes from "./routes/customers.js";
 import gagesRoutes from "./routes/gages.js";
 import modelTypesRoutes from "./routes/model-types.js";
@@ -107,7 +107,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // REST API RESOURSE
 app.use("/v1/users", usersRoutes);
 app.use("/v1/media", mediasRoutes);
-app.use("/v1/products", productsRoutes);
+app.use("/v1/orders", ordersRoutes);
 app.use("/v1/customers", customersRoutes);
 app.use("/v1/modelTypes", modelTypesRoutes);
 app.use("/v1/gages", gagesRoutes);

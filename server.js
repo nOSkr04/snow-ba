@@ -14,21 +14,14 @@ import rateLimit from "express-rate-limit";
 import hpp from "hpp";
 
 // Router оруулж ирэх
-import ordersRoutes from "./routes/orders.js";
-import customersRoutes from "./routes/customers.js";
-import gagesRoutes from "./routes/gages.js";
-import modelTypesRoutes from "./routes/model-types.js";
+
 import errorHandler from "./middleware/error.js";
 import connectDB from "./config/db.js";
 import usersRoutes from "./routes/users.js";
-import mediasRoutes from "./routes/media.js";
-import plysRoutes from "./routes/plys.js";
-import materialsRoutes from "./routes/materials.js";
-import sizesRoutes from "./routes/sizes.js";
-import knitUsersRoutes from "./routes/knitUsers.js";
-import knitRoutes from "./routes/knits.js";
-import knitHistoryRoutes from "./routes/knit-historys.js";
-import sewRoutes from "./routes/sews.js";
+import styleSettingsRoutes from "./routes/style-settings.js";
+import stylesRoutes from "./routes/styles.js";
+import ordersRoutes from "./routes/orders.js";
+import clientsRoutes from "./routes/clients.js";
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
@@ -69,7 +62,7 @@ var corsOptions = {
 };
 
 // index.html-ийг public хавтас дотроос ол гэсэн тохиргоо
-app.use(express.static(new URL("public", import.meta.url).pathname));
+app.use(express.static(path.join(process.cwd(), "public")));
 
 // Express rate limit : Дуудалтын тоог хязгаарлана
 const limiter = rateLimit({
@@ -105,19 +98,12 @@ var accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }));
 
 // REST API RESOURSE
-app.use("/v1/users", usersRoutes);
-app.use("/v1/media", mediasRoutes);
-app.use("/v1/orders", ordersRoutes);
-app.use("/v1/customers", customersRoutes);
-app.use("/v1/modelTypes", modelTypesRoutes);
-app.use("/v1/gages", gagesRoutes);
-app.use("/v1/plys", plysRoutes);
-app.use("/v1/materials", materialsRoutes);
-app.use("/v1/sizes", sizesRoutes);
-app.use("/v1/knitUsers", knitUsersRoutes);
-app.use("/v1/knit", knitRoutes);
-app.use("/v1/knitHistory", knitHistoryRoutes);
-app.use("/v1/sews", sewRoutes);
+app.use("/users", usersRoutes);
+app.use("/style-settings", styleSettingsRoutes);
+app.use("/styles", stylesRoutes);
+app.use("/orders", ordersRoutes);
+app.use("/clients", clientsRoutes);
+
 // Алдаа үүсэхэд барьж авч алдааны мэдээллийг клиент тал руу автоматаар мэдээлнэ
 app.use(errorHandler);
 

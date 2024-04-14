@@ -4,8 +4,18 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  lastName: {
     type: String,
+  },
+  firstName: {
+    type: String,
+  },
+  avatar: {
+    type: String,
+  },
+  humanId: {
+    type: String,
+    unique: true,
   },
   phone: {
     type: String,
@@ -17,7 +27,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "operator", "admin"],
+    enum: ["admin", "directer", "knit-manager", "order-manager"],
     default: "user",
   },
   password: {

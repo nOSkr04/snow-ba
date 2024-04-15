@@ -20,8 +20,8 @@ export const getOrders = asyncHandler(async (req, res, next) => {
   const orders = await Order.find(req.query, select)
     .sort(sort)
     .skip(pagination.start - 1)
-    .limit(limit);
-
+    .limit(limit)
+    .populate(["style", "client"]);
   res.status(200).json({
     success: true,
     count: orders.length,

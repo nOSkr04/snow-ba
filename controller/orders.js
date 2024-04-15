@@ -21,7 +21,13 @@ export const getOrders = asyncHandler(async (req, res, next) => {
     .sort(sort)
     .skip(pagination.start - 1)
     .limit(limit)
-    .populate(["style", "client"]);
+    .populate([
+      "client",
+      {
+        path: "style",
+        populate: ["gage", "modelType", "ply", "material", "size"],
+      },
+    ]);
   res.status(200).json({
     success: true,
     count: orders.length,

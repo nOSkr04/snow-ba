@@ -23,6 +23,7 @@ export const getOrders = asyncHandler(async (req, res, next) => {
     .limit(limit)
     .populate([
       "client",
+      "size",
       {
         path: "style",
         populate: ["gage", "modelType", "ply", "material", "size"],

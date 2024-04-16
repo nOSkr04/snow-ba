@@ -7,12 +7,11 @@ import {
   createKnit,
   deleteKnit,
   updateKnit,
-  uploadKnitPhoto,
+  getOrderKnits,
 } from "../controller/knits.js";
 
 const router = Router();
 
-router.route("/image").post(uploadKnitPhoto);
 //"/api/v1/knits"
 router
   .route("/")

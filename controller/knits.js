@@ -3,8 +3,8 @@ import MyError from "../utils/myError.js";
 import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
 import User from "../models/User.js";
-import { v4 as uuidv4 } from "uuid";
-import path from "path";
+import Order from "../models/Order.js";
+
 // api/v1/knits
 export const getKnits = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -24,6 +24,34 @@ export const getKnits = asyncHandler(async (req, res, next) => {
     success: true,
     count: knits.length,
     data: knits,
+    pagination,
+  });
+});
+
+export const getOrderKnits = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const sort = req.query.sort;
+  const select = req.query.select;
+  [("select", "sort", "page", "limit")].forEach((el) => delete req.query[el]);
+  const pagination = await paginate(page, limit, Order);
+
+  const orders = await Order.find(req.query, select)
+    .sort(sort)
+    .skip(pagination.start - 1)
+    .limit(limit)
+    .populate([
+      "client",
+      "size",
+      {
+        path: "style",
+        populate: ["gage", "modelType", "ply", "material", "size"],
+      },
+    ]);
+  res.status(200).json({
+    success: true,
+    count: orders.length,
+    order: orders,
     pagination,
   });
 });

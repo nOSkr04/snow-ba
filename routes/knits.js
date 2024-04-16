@@ -19,6 +19,8 @@ router
   .get(protect, getKnits)
   .post(protect, authorize("admin", "order-manager"), createKnit);
 
+router.route("/orders").get(protect, getOrderKnits);
+
 router
   .route("/:id")
   .get(getKnit)

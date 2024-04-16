@@ -13,6 +13,8 @@ const KnitSchema = new mongoose.Schema({
     type: String,
     enum: ["working", "done"],
   },
+  excel: String,
+  pdf: String,
   order: {
     type: mongoose.Schema.ObjectId,
     ref: "Order",

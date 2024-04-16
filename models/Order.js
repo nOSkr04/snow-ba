@@ -33,6 +33,58 @@ const Order = new mongoose.Schema({
     required: [true, "Захиалгын төрөл оруулна уу"],
     enum: ["repair", "mass", "excitement"],
   },
+  order: {
+    type: String,
+    enum: ["waiting", "working", "done"],
+  },
+  braidingProcess: [
+    {
+      quantity: {
+        type: Number,
+        default: 0,
+      },
+      braidingUser: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+  braidingQuantity: {
+    type: Number,
+    default: 0,
+  },
+  sewingProcess: [
+    {
+      quantity: {
+        type: Number,
+        default: 0,
+      },
+      sewingUser: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+  sewingQuantity: {
+    type: Number,
+    default: 0,
+  },
+  executiveProcess: [
+    {
+      quantity: {
+        type: Number,
+        default: 0,
+      },
+      executiveUser: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+  executiveQuantity: {
+    type: Number,
+    default: 0,
+  },
   createUser: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

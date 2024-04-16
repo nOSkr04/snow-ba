@@ -19,6 +19,10 @@ const KnitSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Order",
   },
+  sewWeight: {
+    type: String,
+    default: 0,
+  },
   knitter: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

@@ -34,6 +34,7 @@ const UserSchema = new mongoose.Schema({
       "sew-manager",
       "order-manager",
       "sew-worker",
+      "knit-worker",
     ],
     default: "user",
   },

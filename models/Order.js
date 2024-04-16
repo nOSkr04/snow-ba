@@ -54,7 +54,11 @@ const Order = new mongoose.Schema({
       },
     },
   ],
-  braidingQuantity: {
+  braidQuantity: {
+    type: Number,
+    default: 0,
+  },
+  braidedQuantity: {
     type: Number,
     default: 0,
   },

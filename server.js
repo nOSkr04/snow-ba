@@ -22,6 +22,7 @@ import styleSettingsRoutes from "./routes/style-settings.js";
 import stylesRoutes from "./routes/styles.js";
 import ordersRoutes from "./routes/orders.js";
 import clientsRoutes from "./routes/clients.js";
+import knitsRoutes from "./routes/knits.js";
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
@@ -103,6 +104,7 @@ app.use("/style-settings", styleSettingsRoutes);
 app.use("/styles", stylesRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/clients", clientsRoutes);
+app.use("/knits", knitsRoutes);
 
 // Алдаа үүсэхэд барьж авч алдааны мэдээллийг клиент тал руу автоматаар мэдээлнэ
 app.use(errorHandler);

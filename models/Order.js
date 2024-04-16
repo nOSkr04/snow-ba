@@ -37,6 +37,11 @@ const Order = new mongoose.Schema({
     type: String,
     enum: ["waiting", "working", "done"],
   },
+  braidingStatus: {
+    type: String,
+    default: "waiting",
+    enum: ["waiting", "working", "done"],
+  },
   braidingProcess: [
     {
       quantity: {

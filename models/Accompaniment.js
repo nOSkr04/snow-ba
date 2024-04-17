@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
-const KnitSchema = new mongoose.Schema({
+const AccompanimentSchema = new mongoose.Schema({
   quantity: {
     type: Number,
     default: 0,
@@ -23,6 +22,10 @@ const KnitSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },
+  tailor: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -33,4 +36,4 @@ const KnitSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Knit", KnitSchema);
+export default mongoose.model("Accompaniment", AccompanimentSchema);

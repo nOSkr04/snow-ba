@@ -80,6 +80,10 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError(orderId + " ID-тэй захиалга байхгүй.", 400);
   }
 
+  if (order.knitResidualCount < quantity) {
+    throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
+  }
+
   const counts = Accompaniment.countDocuments({
     createdAt: {
       $gte: moment().startOf("month"),

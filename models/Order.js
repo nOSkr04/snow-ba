@@ -37,33 +37,24 @@ const Order = new mongoose.Schema({
     type: String,
     enum: ["waiting", "working", "done"],
   },
+  completed: {
+    type: Number,
+    default: 0,
+  },
   knitingStatus: {
     type: String,
     default: "waiting",
     enum: ["waiting", "working", "done"],
   },
-  knitingProcess: [
-    {
-      quantity: {
-        type: Number,
-        default: 0,
-      },
-      braidingUser: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-      braidingStatus: {
-        type: String,
-        default: "working",
-        enum: ["working", "done"],
-      },
-    },
-  ],
-  knitProcessQuantity: {
+  knitResidualCount: {
     type: Number,
     default: 0,
   },
-  knitEndQuantity: {
+  knitGrantedCount: {
+    type: Number,
+    default: 0,
+  },
+  knitEndCount: {
     type: Number,
     default: 0,
   },
@@ -71,6 +62,24 @@ const Order = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },
+  knitProcessUser: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      quantity: Number,
+    },
+  ],
+  knitCompleteUser: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      quantity: Number,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

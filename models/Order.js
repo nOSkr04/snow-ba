@@ -37,12 +37,12 @@ const Order = new mongoose.Schema({
     type: String,
     enum: ["waiting", "working", "done"],
   },
-  braidingStatus: {
+  knitingStatus: {
     type: String,
     default: "waiting",
     enum: ["waiting", "working", "done"],
   },
-  braidingProcess: [
+  knitingProcess: [
     {
       quantity: {
         type: Number,
@@ -52,45 +52,18 @@ const Order = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "User",
       },
-    },
-  ],
-  braidQuantity: {
-    type: Number,
-    default: 0,
-  },
-  braidedQuantity: {
-    type: Number,
-    default: 0,
-  },
-  sewingProcess: [
-    {
-      quantity: {
-        type: Number,
-        default: 0,
-      },
-      sewingUser: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
+      braidingStatus: {
+        type: String,
+        default: "working",
+        enum: ["working", "done"],
       },
     },
   ],
-  sewingQuantity: {
+  knitProcessQuantity: {
     type: Number,
     default: 0,
   },
-  executiveProcess: [
-    {
-      quantity: {
-        type: Number,
-        default: 0,
-      },
-      executiveUser: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-    },
-  ],
-  executiveQuantity: {
+  knitEndQuantity: {
     type: Number,
     default: 0,
   },

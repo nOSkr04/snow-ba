@@ -7,6 +7,7 @@ import {
   createAccompaniment,
   deleteAccompaniment,
   updateAccompaniment,
+  getOrderAccompaniments,
 } from "../controller/accompaniments.js";
 
 const router = Router();

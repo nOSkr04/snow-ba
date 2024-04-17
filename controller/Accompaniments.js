@@ -4,7 +4,7 @@ import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
 import User from "../models/User.js";
 import Order from "../models/Order.js";
-
+import moment from "moment";
 // api/v1/accompaniments
 export const getAccompaniments = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -73,9 +73,31 @@ export const getAccompaniment = asyncHandler(async (req, res, next) => {
 });
 
 export const createAccompaniment = asyncHandler(async (req, res, next) => {
-  req.body.createUser = req.userId;
+  const { quantity, sewWeight, knitter, orderId } = req.body;
 
-  const accompaniment = await Accompaniment.create(req.body);
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new MyError(orderId + " ID-тэй захиалга байхгүй.", 400);
+  }
+
+  const counts = Accompaniment.countDocuments({
+    createdAt: {
+      $gte: moment().startOf("month"),
+      $lte: moment().endOf("month"),
+    },
+  });
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-1);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const barcode = year + month + `${counts}`.padStart(5, "0");
+  const accompaniment = await Accompaniment.create({
+    quantity: quantity,
+    sewWeight: sewWeight,
+    knitter: knitter,
+    order: order,
+    status: "working",
+    barcode: barcode,
+  });
 
   res.status(200).json({
     success: true,
@@ -90,7 +112,10 @@ export const deleteAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
-  if (accompaniment.createUser.toString() !== req.userId && req.userRole !== "admin") {
+  if (
+    accompaniment.createUser.toString() !== req.userId &&
+    req.userRole !== "admin"
+  ) {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
   }
 
@@ -112,7 +137,10 @@ export const updateAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError(req.params.id + " ID-тэй ном байхгүйээээ.", 400);
   }
 
-  if (accompaniment.createUser.toString() !== req.userId && req.userRole !== "admin") {
+  if (
+    accompaniment.createUser.toString() !== req.userId &&
+    req.userRole !== "admin"
+  ) {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
   }
 

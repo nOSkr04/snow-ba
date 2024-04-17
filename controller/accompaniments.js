@@ -73,7 +73,7 @@ export const getAccompaniment = asyncHandler(async (req, res, next) => {
 });
 
 export const createAccompaniment = asyncHandler(async (req, res, next) => {
-  const { quantity, sewWeight, knitter, orderId } = req.body;
+  const { quantity, knitWeight, knitter, orderId } = req.body;
 
   const order = await Order.findById(orderId);
   if (!order) {
@@ -96,16 +96,18 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
   const barcode = year + month + `${counts}`.padStart(5, "0");
   const accompaniment = await Accompaniment.create({
     quantity: quantity,
-    sewWeight: sewWeight,
+    knitWeight: knitWeight,
     knitter: knitter,
     order: order,
     status: "working",
     barcode: barcode,
+    pdf: "<div><h1>HTML</h1></div>",
   });
 
   res.status(200).json({
     success: true,
     data: accompaniment,
+    pdf: accompaniment.pdf,
   });
 });
 

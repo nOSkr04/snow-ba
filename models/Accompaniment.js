@@ -18,6 +18,10 @@ const AccompanimentSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Order",
   },
+  knitWeight: {
+    type: String,
+    default: 0,
+  },
   sewWeight: {
     type: String,
     default: 0,

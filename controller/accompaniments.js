@@ -102,6 +102,8 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
     status: "working",
     barcode: barcode,
     pdf: "<div><h1>HTML</h1></div>",
+    excel:
+      "batnaa end excel ee butsaah heregtei baina URL butsaah bh public dotroo upload hiicheh bolhiin",
   });
 
   res.status(200).json({

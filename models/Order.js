@@ -25,7 +25,8 @@ const Order = new mongoose.Schema({
     required: [true, "Ширхэг заавал оруулна уу"],
   },
   size: {
-    type: String,
+    type: mongoose.Schema.ObjectId,
+    ref: "StyleSetting",
     required: [true, "Размер заавал оруулна уу"],
   },
   orderType: {
@@ -54,7 +55,7 @@ const Order = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  knitEndCount: {
+  knitCompletedCount: {
     type: Number,
     default: 0,
   },

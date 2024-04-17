@@ -73,18 +73,33 @@ export const getAccompaniment = asyncHandler(async (req, res, next) => {
 });
 
 export const createAccompaniment = asyncHandler(async (req, res, next) => {
-  const { quantity, knitWeight, knitter, orderId } = req.body;
-
+  const { knitQuantity, knitter, orderId } = req.body;
+  if (!knitter) {
+    throw new MyError(orderId + " ID-тэй сүлжигч байхгүй байна.", 400);
+  }
   const order = await Order.findById(orderId);
   if (!order) {
     throw new MyError(orderId + " ID-тэй захиалга байхгүй.", 400);
   }
 
-  if (order.knitResidualCount < quantity) {
+  if (order.knitResidualCount < Number(knitQuantity)) {
     throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
   }
 
-  const counts = Accompaniment.countDocuments({
+  order.knitResidualCount = order.quantity - Number(knitQuantity);
+  order.knitGrantedCount = order.knitGrantedCount + Number(knitQuantity);
+  order.order = "working";
+
+  const accompaniment = await Accompaniment.create({
+    quantity: Number(knitQuantity),
+    knitter: knitter,
+    order: order,
+    status: "working",
+    pdf: "<div><h1>HTML</h1></div>",
+    excel:
+      "batnaa end excel ee butsaah heregtei baina URL butsaah bh public dotroo upload hiicheh bolhiin",
+  });
+  const counts = await Accompaniment.countDocuments({
     createdAt: {
       $gte: moment().startOf("month"),
       $lte: moment().endOf("month"),
@@ -94,18 +109,9 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
   const year = date.getFullYear().toString().slice(-1);
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const barcode = year + month + `${counts}`.padStart(5, "0");
-  const accompaniment = await Accompaniment.create({
-    quantity: quantity,
-    knitWeight: knitWeight,
-    knitter: knitter,
-    order: order,
-    status: "working",
-    barcode: barcode,
-    pdf: "<div><h1>HTML</h1></div>",
-    excel:
-      "batnaa end excel ee butsaah heregtei baina URL butsaah bh public dotroo upload hiicheh bolhiin",
-  });
-
+  accompaniment.barcode = barcode;
+  accompaniment.save();
+  order.save();
   res.status(200).json({
     success: true,
     data: accompaniment,

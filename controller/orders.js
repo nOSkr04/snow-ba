@@ -22,8 +22,8 @@ export const getOrders = asyncHandler(async (req, res, next) => {
     .skip(pagination.start - 1)
     .limit(limit)
     .populate([
-      "client",
       "size",
+      "client",
       {
         path: "style",
         populate: ["gage", "modelType", "ply", "material", "size"],
@@ -70,9 +70,29 @@ export const getOrder = asyncHandler(async (req, res, next) => {
 });
 
 export const createOrder = asyncHandler(async (req, res, next) => {
-  req.body.createUser = req.userId;
+  const {
+    client,
+    customerType,
+    daimond,
+    deadline,
+    orderType,
+    quantity,
+    size,
+    style,
+  } = req.body;
 
-  const order = await Order.create(req.body);
+  const order = await Order.create({
+    client,
+    createUser: req.userId,
+    customerType,
+    daimond,
+    deadline,
+    orderType,
+    quantity,
+    size,
+    style,
+    knitResidualCount: quantity,
+  });
 
   res.status(200).json({
     success: true,

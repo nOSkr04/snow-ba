@@ -38,7 +38,12 @@ const Order = new mongoose.Schema({
     type: String,
     enum: ["waiting", "working", "done"],
   },
+
   completed: {
+    type: Number,
+    default: 0,
+  },
+  knitWeight: {
     type: Number,
     default: 0,
   },

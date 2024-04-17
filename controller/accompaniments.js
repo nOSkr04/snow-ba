@@ -77,6 +77,26 @@ export const getAccompaniment = asyncHandler(async (req, res, next) => {
     data: accompaniment,
   });
 });
+export const getBarcode = asyncHandler(async (req, res, next) => {
+  const accompaniment = await Accompaniment.findOne({
+    barcode: req.params.barcode,
+  }).populate([
+    "knitter",
+    {
+      path: "order",
+      populate: ["style"],
+    },
+  ]);
+
+  if (!accompaniment) {
+    throw new MyError(req.params.barcode + " баркод байхгүй байна.", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    data: accompaniment,
+  });
+});
 
 export const createAccompaniment = asyncHandler(async (req, res, next) => {
   const { knitQuantity, knitter, orderId } = req.body;
@@ -92,7 +112,7 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError("Оруулсан тоо хэт өндөр байна", 400);
   }
 
-  order.knitResidualCount = order.quantity - Number(knitQuantity);
+  order.knitResidualCount = order.knitResidualCount - Number(knitQuantity);
   order.knitGrantedCount = order.knitGrantedCount + Number(knitQuantity);
   order.order = "working";
 
@@ -123,6 +143,38 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
     success: true,
     data: accompaniment,
     pdf: accompaniment.pdf,
+  });
+});
+
+export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
+  const accompaniment = await Accompaniment.findById(req.params.id);
+
+  if (!accompaniment) {
+    throw new MyError(req.params.id + " ID-тэй дагалдах байхгүй байна.", 404);
+  }
+
+  if (accompaniment.status === "done") {
+    throw new MyError("Хүлээн авсан байна", 400);
+  }
+
+  if (!accompaniment.order) {
+    throw new MyError("Дагалдахад захиалга олдсонгүй", 400);
+  }
+
+  const order = await Order.findById(accompaniment.order);
+
+  order.knitGrantedCount = order.knitGrantedCount - accompaniment.quantity;
+  order.knitCompletedCount = order.knitCompletedCount + accompaniment.quantity;
+  order.knitWeight = order.knitWeight + req.body.knitWeight;
+  accompaniment.status = "done";
+  accompaniment.knitStatus = "done";
+  accompaniment.knitWeight = req.body.knitWeight;
+  accompaniment.save();
+  order.save();
+
+  res.status(200).json({
+    success: true,
+    data: accompaniment,
   });
 });
 

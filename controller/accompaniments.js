@@ -19,7 +19,13 @@ export const getAccompaniments = asyncHandler(async (req, res, next) => {
     .sort(sort)
     .skip(pagination.start - 1)
     .limit(limit)
-    .populate(["gage", "modelType", "ply", "material", "size"]);
+    .populate([
+      "knitter",
+      {
+        path: "order",
+        populate: ["style"],
+      },
+    ]);
   res.status(200).json({
     success: true,
     count: accompaniments.length,
@@ -95,6 +101,7 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
     knitter: knitter,
     order: order,
     status: "working",
+    knitStatus: "working",
     pdf: "<div><h1>HTML</h1></div>",
     excel:
       "batnaa end excel ee butsaah heregtei baina URL butsaah bh public dotroo upload hiicheh bolhiin",

@@ -12,6 +12,10 @@ const AccompanimentSchema = new mongoose.Schema({
     type: String,
     enum: ["working", "done"],
   },
+  knitStatus: {
+    type: String,
+    enum: ["working", "done"],
+  },
   excel: String,
   pdf: String,
   order: {

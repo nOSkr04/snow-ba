@@ -4,6 +4,8 @@ import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
 import Order from "../models/Order.js";
 import moment from "moment";
+import AccompHtml from "../utils/accomp-html.js";
+import Pdf from "../models/Pdf.js";
 // api/v1/accompaniments
 export const getAccompaniments = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -119,10 +121,11 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
   const accompaniment = await Accompaniment.create({
     quantity: Number(knitQuantity),
     knitter: knitter,
-    order: order,
+    order: order._id,
     status: "working",
     knitStatus: "working",
     pdf: "<div><h1>HTML</h1></div>",
+    availableKnit: true,
     excel:
       "batnaa end excel ee butsaah heregtei baina URL butsaah bh public dotroo upload hiicheh bolhiin",
   });
@@ -148,11 +151,19 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
     },
   ];
   order.accompaniments = [...order.accompaniments, accompaniment._id];
+  const pdf = await Pdf.create({
+    content: await AccompHtml({
+      order: order._id,
+      accompaniment: accompaniment._id,
+    }),
+    accompaniment: accompaniment._id,
+  });
+  order.pdfs = [pdf._id, ...order.pdfs];
   order.save();
   res.status(200).json({
     success: true,
     data: accompaniment,
-    pdf: accompaniment.pdf,
+    pdf: pdf.content,
   });
 });
 
@@ -163,8 +174,7 @@ export const knitAccompaniment = asyncHandler(async (req, res, next) => {
   if (!accompaniment) {
     throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
   }
-
-  if (accompaniment.status || accompaniment.knitStatus === "done") {
+  if (accompaniment.status === "done" || accompaniment.knitStatus === "done") {
     throw new MyError("Хүлээн авсан байна", 400);
   }
 
@@ -194,6 +204,7 @@ export const knitAccompaniment = asyncHandler(async (req, res, next) => {
   accompaniment.knitStatus = "done";
   accompaniment.knitWeight = req.body.knitWeight;
   accompaniment.availableSew = true;
+  accompaniment.sewStatus = "working";
   accompaniment.save();
   order.save();
 
@@ -212,7 +223,7 @@ export const sewAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
   }
 
-  if (accompaniment.status || accompaniment.sewStatus === "done") {
+  if (accompaniment.status === "done" || accompaniment.sewStatus === "done") {
     throw new MyError("Хүлээн авсан байна", 400);
   }
 
@@ -244,6 +255,7 @@ export const sewAccompaniment = asyncHandler(async (req, res, next) => {
   accompaniment.sewWeight = sewWeight;
   accompaniment.sewer = sewUser;
   accompaniment.availableExecutive = true;
+  accompaniment.executiveStatus = "working";
   accompaniment.save();
   order.save();
 
@@ -262,7 +274,10 @@ export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
   }
 
-  if (accompaniment.status || accompaniment.executiveStatus === "done") {
+  if (
+    accompaniment.status === "done" ||
+    accompaniment.executiveStatus === "done"
+  ) {
     throw new MyError("Хүлээн авсан байна", 400);
   }
 

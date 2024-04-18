@@ -48,6 +48,7 @@ const Order = new mongoose.Schema({
       ref: "Accompaniment",
     },
   ],
+  retryDescription: String,
   knitWeight: {
     type: Number,
     default: 0,
@@ -69,6 +70,12 @@ const Order = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  pdfs: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Pdf",
+    },
+  ],
   knitProcessUser: [
     {
       user: {

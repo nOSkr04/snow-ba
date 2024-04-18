@@ -28,6 +28,10 @@ const AccompanimentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  availableKnit: {
+    type: Boolean,
+    default: false,
+  },
   executiveStatus: {
     type: String,
     enum: ["working", "done"],

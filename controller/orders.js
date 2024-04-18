@@ -54,7 +54,19 @@ export const createOrderDetail = asyncHandler(async (req, res, next) => {
 });
 
 export const getOrder = asyncHandler(async (req, res, next) => {
-  const order = await Order.findById(req.params.id);
+  const order = await Order.findById(req.params.id).populate([
+    "size",
+    "client",
+    ,
+    {
+      path: "pdfs",
+      populate: ["accompaniment"],
+    },
+    {
+      path: "style",
+      populate: ["gage", "modelType", "ply", "material", "size"],
+    },
+  ]);
 
   if (!order) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);

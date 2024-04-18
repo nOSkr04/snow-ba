@@ -193,6 +193,7 @@ export const knitAccompaniment = asyncHandler(async (req, res, next) => {
 
   accompaniment.knitStatus = "done";
   accompaniment.knitWeight = req.body.knitWeight;
+  accompaniment.availableSew = true;
   accompaniment.save();
   order.save();
 
@@ -204,7 +205,7 @@ export const knitAccompaniment = asyncHandler(async (req, res, next) => {
 
 export const sewAccompaniment = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { sewWeight, sewer } = req.body;
+  const { sewWeight, sewUser } = req.body;
   const accompaniment = await Accompaniment.findById(id);
 
   if (!accompaniment) {
@@ -233,7 +234,7 @@ export const sewAccompaniment = asyncHandler(async (req, res, next) => {
   order.sewCompleteUser = [
     ...order.sewCompleteUser,
     {
-      user: sewer,
+      user: sewUser,
       quantity: accompaniment.quantity,
       accompaniment: accompaniment._id,
     },
@@ -241,7 +242,8 @@ export const sewAccompaniment = asyncHandler(async (req, res, next) => {
 
   accompaniment.sewStatus = "done";
   accompaniment.sewWeight = sewWeight;
-  accompaniment.sewer = sewer;
+  accompaniment.sewer = sewUser;
+  accompaniment.availableExecutive = true;
   accompaniment.save();
   order.save();
 

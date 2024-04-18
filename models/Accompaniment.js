@@ -16,6 +16,14 @@ const AccompanimentSchema = new mongoose.Schema({
     type: String,
     enum: ["working", "done"],
   },
+  sewStatus: {
+    type: String,
+    enum: ["working", "done"],
+  },
+  executiveStatus: {
+    type: String,
+    enum: ["working", "done"],
+  },
   excel: String,
   pdf: String,
   order: {
@@ -30,11 +38,19 @@ const AccompanimentSchema = new mongoose.Schema({
     type: String,
     default: 0,
   },
+  executiveWeight: {
+    type: String,
+    default: 0,
+  },
   knitter: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },
-  tailor: {
+  sewer: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
+  executive: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },

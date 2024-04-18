@@ -76,6 +76,7 @@ export const getAccompaniment = asyncHandler(async (req, res, next) => {
     data: accompaniment,
   });
 });
+
 export const getBarcode = asyncHandler(async (req, res, next) => {
   const accompaniment = await Accompaniment.findOne({
     barcode: req.params.barcode,
@@ -155,7 +156,7 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
+export const knitAccompaniment = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const accompaniment = await Accompaniment.findById(id);
 
@@ -163,7 +164,7 @@ export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
     throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
   }
 
-  if (accompaniment.status === "done") {
+  if (accompaniment.status || accompaniment.knitStatus === "done") {
     throw new MyError("Хүлээн авсан байна", 400);
   }
 
@@ -175,6 +176,7 @@ export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
   order.knitGrantedCount = order.knitGrantedCount - accompaniment.quantity;
   order.knitCompletedCount = order.knitCompletedCount + accompaniment.quantity;
   order.knitWeight = order.knitWeight + req.body.knitWeight;
+  order.sewGrantedCount = order.sewGrantedCount + accompaniment.quantity;
   const removeProcessKnitter = order.knitProcessUser.filter(
     (knitter) => knitter.accompaniment !== id
   );
@@ -189,9 +191,107 @@ export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
     },
   ];
 
-  accompaniment.status = "done";
   accompaniment.knitStatus = "done";
   accompaniment.knitWeight = req.body.knitWeight;
+  accompaniment.save();
+  order.save();
+
+  res.status(200).json({
+    success: true,
+    data: accompaniment,
+  });
+});
+
+export const sewAccompaniment = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { sewWeight, sewer } = req.body;
+  const accompaniment = await Accompaniment.findById(id);
+
+  if (!accompaniment) {
+    throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
+  }
+
+  if (accompaniment.status || accompaniment.sewStatus === "done") {
+    throw new MyError("Хүлээн авсан байна", 400);
+  }
+
+  if (!accompaniment.order) {
+    throw new MyError("Дагалдахад захиалга олдсонгүй", 400);
+  }
+
+  const order = await Order.findById(accompaniment.order);
+  order.sewGrantedCount = order.sewGrantedCount - accompaniment.quantity;
+  order.sewCompletedCount = order.sewCompletedCount + accompaniment.quantity;
+  order.sewWeight = order.sewWeight + sewWeight;
+  order.executiveGrantedCount =
+    order.executiveGrantedCount + accompaniment.quantity;
+  const removeProcessSewer = order.sewProcessUser.filter(
+    (sewing) => sewing.accompaniment !== id
+  );
+
+  order.sewProcessUser = removeProcessSewer;
+  order.sewCompleteUser = [
+    ...order.sewCompleteUser,
+    {
+      user: sewer,
+      quantity: accompaniment.quantity,
+      accompaniment: accompaniment._id,
+    },
+  ];
+
+  accompaniment.sewStatus = "done";
+  accompaniment.sewWeight = sewWeight;
+  accompaniment.sewer = sewer;
+  accompaniment.save();
+  order.save();
+
+  res.status(200).json({
+    success: true,
+    data: accompaniment,
+  });
+});
+
+export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { executiveWeight, executive } = req.body;
+  const accompaniment = await Accompaniment.findById(id);
+
+  if (!accompaniment) {
+    throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
+  }
+
+  if (accompaniment.status || accompaniment.executiveStatus === "done") {
+    throw new MyError("Хүлээн авсан байна", 400);
+  }
+
+  if (!accompaniment.order) {
+    throw new MyError("Дагалдахад захиалга олдсонгүй", 400);
+  }
+
+  const order = await Order.findById(accompaniment.order);
+  order.executiveGrantedCount =
+    order.executiveGrantedCount - accompaniment.quantity;
+  order.executiveCompletedCount =
+    order.executiveCompletedCount + accompaniment.quantity;
+  order.executiveWeight = order.executiveWeight + executiveWeight;
+  order.completed = order.completed + accompaniment.quantity;
+  const removeProcessExecutive = order.executiveProcessUser.filter(
+    (executive) => executive.accompaniment !== id
+  );
+
+  order.executiveProcessUser = removeProcessExecutive;
+  order.executiveCompleteUser = [
+    ...order.executiveCompleteUser,
+    {
+      user: executive,
+      quantity: accompaniment.quantity,
+      accompaniment: accompaniment._id,
+    },
+  ];
+
+  accompaniment.status = "done";
+  accompaniment.executiveStatus = "done";
+  accompaniment.executiveWeight = executiveWeight;
   accompaniment.save();
   order.save();
 

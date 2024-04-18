@@ -5,8 +5,10 @@ import {
   createAccompaniment,
   getOrderAccompaniments,
   getAccompaniments,
-  recieveAccompaniment,
   getBarcode,
+  knitAccompaniment,
+  sewAccompaniment,
+  executiveAccompaniment,
 } from "../controller/accompaniments.js";
 const router = Router();
 
@@ -19,10 +21,20 @@ router
 router.route("/orders").get(protect, getOrderAccompaniments);
 
 router.route("/barcode/:barcode").get(protect, getBarcode);
+router
+  .route("/:id/sew")
+  .post(protect, authorize("admin", "sew-manager"), sewAccompaniment);
+router
+  .route("/:id/executive")
+  .post(
+    protect,
+    authorize("admin", "executive-manager"),
+    executiveAccompaniment
+  );
 
 router
   .route("/:id")
   .get(getAccompaniment)
-  .post(protect, authorize("admin", "knit-manager"), recieveAccompaniment);
+  .post(protect, authorize("admin", "knit-manager"), knitAccompaniment);
 
 export default router;

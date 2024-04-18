@@ -69,10 +69,6 @@ const Order = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  createUser: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-  },
   knitProcessUser: [
     {
       user: {
@@ -99,6 +95,105 @@ const Order = new mongoose.Schema({
       },
     },
   ],
+  sewWeight: {
+    type: Number,
+    default: 0,
+  },
+  sewingStatus: {
+    type: String,
+    default: "waiting",
+    enum: ["waiting", "working", "done"],
+  },
+  sewResidualCount: {
+    type: Number,
+    default: 0,
+  },
+  sewGrantedCount: {
+    type: Number,
+    default: 0,
+  },
+  sewCompletedCount: {
+    type: Number,
+    default: 0,
+  },
+  sewProcessUser: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      quantity: Number,
+      accompaniment: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Accompaniment",
+      },
+    },
+  ],
+  sewCompleteUser: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      quantity: Number,
+      accompaniment: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Accompaniment",
+      },
+    },
+  ],
+  //
+  executiveWeight: {
+    type: Number,
+    default: 0,
+  },
+  executivingStatus: {
+    type: String,
+    default: "waiting",
+    enum: ["waiting", "working", "done"],
+  },
+  executiveResidualCount: {
+    type: Number,
+    default: 0,
+  },
+  executiveGrantedCount: {
+    type: Number,
+    default: 0,
+  },
+  executiveCompletedCount: {
+    type: Number,
+    default: 0,
+  },
+  executiveProcessUser: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      quantity: Number,
+      accompaniment: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Accompaniment",
+      },
+    },
+  ],
+  executiveCompleteUser: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      quantity: Number,
+      accompaniment: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Accompaniment",
+      },
+    },
+  ],
+  createUser: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

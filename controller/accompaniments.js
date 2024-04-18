@@ -146,7 +146,7 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
       accompaniment: accompaniment._id,
     },
   ];
-  order.accompaniments = [...order.accompaniments, accompaniment];
+  order.accompaniments = [...order.accompaniments, accompaniment._id];
   order.save();
   res.status(200).json({
     success: true,

@@ -38,11 +38,16 @@ const Order = new mongoose.Schema({
     type: String,
     enum: ["waiting", "working", "done"],
   },
-
   completed: {
     type: Number,
     default: 0,
   },
+  accompaniments: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Accompaniment",
+    },
+  ],
   knitWeight: {
     type: Number,
     default: 0,
@@ -75,6 +80,10 @@ const Order = new mongoose.Schema({
         ref: "User",
       },
       quantity: Number,
+      accompaniment: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Accompaniment",
+      },
     },
   ],
   knitCompleteUser: [
@@ -84,6 +93,10 @@ const Order = new mongoose.Schema({
         ref: "User",
       },
       quantity: Number,
+      accompaniment: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Accompaniment",
+      },
     },
   ],
   createdAt: {

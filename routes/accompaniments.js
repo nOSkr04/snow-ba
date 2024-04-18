@@ -5,8 +5,6 @@ import {
   createAccompaniment,
   getOrderAccompaniments,
   getAccompaniments,
-  deleteAccompaniment,
-  updateAccompaniment,
   recieveAccompaniment,
   getBarcode,
 } from "../controller/accompaniments.js";
@@ -25,8 +23,6 @@ router.route("/barcode/:barcode").get(protect, getBarcode);
 router
   .route("/:id")
   .get(getAccompaniment)
-  .post(protect, authorize("admin", "knit-manager"), recieveAccompaniment)
-  .delete(protect, authorize("admin", "knit-manager"), deleteAccompaniment)
-  .put(protect, authorize("admin", "knit-manager"), updateAccompaniment);
+  .post(protect, authorize("admin", "knit-manager"), recieveAccompaniment);
 
 export default router;

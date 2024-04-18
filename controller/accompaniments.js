@@ -2,7 +2,6 @@ import Accompaniment from "../models/Accompaniment.js";
 import MyError from "../utils/myError.js";
 import asyncHandler from "express-async-handler";
 import paginate from "../utils/paginate.js";
-import User from "../models/User.js";
 import Order from "../models/Order.js";
 import moment from "moment";
 // api/v1/accompaniments
@@ -137,7 +136,17 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const barcode = year + month + `${counts}`.padStart(5, "0");
   accompaniment.barcode = barcode;
+
   accompaniment.save();
+  order.knitProcessUser = [
+    ...order.knitProcessUser,
+    {
+      user: knitter,
+      quantity: Number(knitQuantity),
+      accompaniment: accompaniment._id,
+    },
+  ];
+  order.accompaniments = [...order.accompaniments, accompaniment];
   order.save();
   res.status(200).json({
     success: true,
@@ -147,10 +156,11 @@ export const createAccompaniment = asyncHandler(async (req, res, next) => {
 });
 
 export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
-  const accompaniment = await Accompaniment.findById(req.params.id);
+  const { id } = req.params;
+  const accompaniment = await Accompaniment.findById(id);
 
   if (!accompaniment) {
-    throw new MyError(req.params.id + " ID-тэй дагалдах байхгүй байна.", 404);
+    throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
   }
 
   if (accompaniment.status === "done") {
@@ -162,68 +172,28 @@ export const recieveAccompaniment = asyncHandler(async (req, res, next) => {
   }
 
   const order = await Order.findById(accompaniment.order);
-
   order.knitGrantedCount = order.knitGrantedCount - accompaniment.quantity;
   order.knitCompletedCount = order.knitCompletedCount + accompaniment.quantity;
   order.knitWeight = order.knitWeight + req.body.knitWeight;
+  const removeProcessKnitter = order.knitProcessUser.filter(
+    (knitter) => knitter.accompaniment !== id
+  );
+
+  order.knitProcessUser = removeProcessKnitter;
+  order.knitCompleteUser = [
+    ...order.knitCompleteUser,
+    {
+      user: accompaniment.knitter,
+      quantity: accompaniment.quantity,
+      accompaniment: accompaniment._id,
+    },
+  ];
+
   accompaniment.status = "done";
   accompaniment.knitStatus = "done";
   accompaniment.knitWeight = req.body.knitWeight;
   accompaniment.save();
   order.save();
-
-  res.status(200).json({
-    success: true,
-    data: accompaniment,
-  });
-});
-
-export const deleteAccompaniment = asyncHandler(async (req, res, next) => {
-  const accompaniment = await Accompaniment.findById(req.params.id);
-
-  if (!accompaniment) {
-    throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
-  }
-
-  if (
-    accompaniment.createUser.toString() !== req.userId &&
-    req.userRole !== "admin"
-  ) {
-    throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
-  }
-
-  const user = await User.findById(req.userId);
-
-  accompaniment.remove();
-
-  res.status(200).json({
-    success: true,
-    data: accompaniment,
-    whoDeleted: user.name,
-  });
-});
-
-export const updateAccompaniment = asyncHandler(async (req, res, next) => {
-  const accompaniment = await Accompaniment.findById(req.params.id);
-
-  if (!accompaniment) {
-    throw new MyError(req.params.id + " ID-тэй ном байхгүйээээ.", 400);
-  }
-
-  if (
-    accompaniment.createUser.toString() !== req.userId &&
-    req.userRole !== "admin"
-  ) {
-    throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
-  }
-
-  req.body.updateUser = req.userId;
-
-  for (let attr in req.body) {
-    accompaniment[attr] = req.body[attr];
-  }
-
-  accompaniment.save();
 
   res.status(200).json({
     success: true,

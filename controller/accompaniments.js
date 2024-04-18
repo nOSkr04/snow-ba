@@ -255,7 +255,7 @@ export const sewAccompaniment = asyncHandler(async (req, res, next) => {
 
 export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { executiveWeight, executive } = req.body;
+  const { executiveWeight } = req.body;
   const accompaniment = await Accompaniment.findById(id);
 
   if (!accompaniment) {
@@ -285,7 +285,6 @@ export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
   order.executiveCompleteUser = [
     ...order.executiveCompleteUser,
     {
-      user: executive,
       quantity: accompaniment.quantity,
       accompaniment: accompaniment._id,
     },

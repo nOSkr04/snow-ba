@@ -58,10 +58,6 @@ const AccompanimentSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },
-  executive: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-  },
   createdAt: {
     type: Date,
     default: Date.now,

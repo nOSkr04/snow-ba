@@ -232,11 +232,13 @@ export const sewAccompaniment = asyncHandler(async (req, res, next) => {
   }
 
   const order = await Order.findById(accompaniment.order);
-  order.sewGrantedCount = order.sewGrantedCount - accompaniment.quantity;
-  order.sewCompletedCount = order.sewCompletedCount + accompaniment.quantity;
-  order.sewWeight = order.sewWeight + sewWeight;
+  order.sewGrantedCount =
+    Number(order.sewGrantedCount) - Number(accompaniment.quantity);
+  order.sewCompletedCount =
+    Number(order.sewCompletedCount) + Number(accompaniment.quantity);
+  order.sewWeight = Number(order.sewWeight) + Number(sewWeight);
   order.executiveGrantedCount =
-    order.executiveGrantedCount + accompaniment.quantity;
+    Number(order.executiveGrantedCount) + Number(accompaniment.quantity);
   const removeProcessSewer = order.sewProcessUser.filter(
     (sewing) => sewing.accompaniment !== id
   );
@@ -287,11 +289,12 @@ export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
 
   const order = await Order.findById(accompaniment.order);
   order.executiveGrantedCount =
-    order.executiveGrantedCount - accompaniment.quantity;
+    Number(order.executiveGrantedCount) - Number(accompaniment.quantity);
   order.executiveCompletedCount =
-    order.executiveCompletedCount + accompaniment.quantity;
-  order.executiveWeight = order.executiveWeight + executiveWeight;
-  order.completed = order.completed + accompaniment.quantity;
+    Number(order.executiveCompletedCount) + Number(accompaniment.quantity);
+  order.executiveWeight =
+    Number(order.executiveWeight) + Number(executiveWeight);
+  order.completed = Number(order.completed) + Number(accompaniment.quantity);
   const removeProcessExecutive = order.executiveProcessUser.filter(
     (executive) => executive.accompaniment !== id
   );

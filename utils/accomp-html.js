@@ -32,7 +32,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
         colspan="2"
       >
         <img
-          src="http://localhost:8001/upload/style/${orders.style.image}"
+          src="https://boostersback.com/upload/def-logo.png"
           alt="Header Avatar"
           height="50"
           width="50"
@@ -41,28 +41,40 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="4">
         ${moment(orders.createdAt).format("YYYY-MM-DD HH:mm")}
       </td>
-      <td class="border border-dark  p-2" colspan="2">
+      <td class="border border-dark  " colspan="2">
         Ачилт огноо
       </td>
       <td class="border border-dark text-center" colspan="2">
       ${moment(orders.deadline).format("YYYY-MM-DD HH:mm")}
       </td>
       <td class="border border-dark text-center" colspan="7">
-        Тайлбар: / ${orders.retryDescription || orders.orderType} /
+        Тайлбар: / ${
+          orders.orderType === "repetition"
+            ? orders.retryDescription
+            : "Дахин хийлт биш"
+        } / 
       </td>
     </tr>
     <tr>
       <td class="border border-dark text-center" colspan="4">
         <strong>${accompaniments.barcode}</strong>
       </td>
-      <td class="border border-dark p-2" colspan="2">
+      <td class="border border-dark " colspan="2">
         Захиалга
       </td>
       <td colspan="7" class="border border-dark text-center">
         <strong>${orders.client?.name}</strong>
       </td>
-      <td colspan="2" class="border border-dark ">
-        ${orders.orderType}
+      <td colspan="2" class="border border-dark text-center">
+        ${
+          orders.orderType === "repair"
+            ? "Засвар"
+            : orders.orderType === "mass"
+            ? "Масс"
+            : orders.orderType === "repetition"
+            ? "Дахин хийлт"
+            : "Хөөлт"
+        }
       </td>
     </tr>
     <tr>
@@ -73,7 +85,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
         height="50px"
       >
       <img
-      src="http://localhost:8001/upload/barcode.png"
+      src="https://boostersback.com/upload/barcode.png"
       alt="Header Avatar"
       height="50px"
       width="100px"
@@ -91,7 +103,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td colspan="1" class="border border-dark text-center">
         Хэмжээ
       </td>
-      <td colspan="1" class="border border-dark text-center">
+      <td colspan="1" class="border border-dark text-center" style="width: 40px;" >
         ${orders.size.name}
       </td>
     </tr>
@@ -119,40 +131,40 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark" colspan="3">
         Өнгө
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
         ${colorArray[0] || " "}
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[1] || " "}
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[2] || " "}
       </td>
-      <td class="border border-dark text-center" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[3] || " "}
       </td>
-      <td class="border border-dark text-center" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[4] || " "}
       </td>
-      <td class="border border-dark text-center" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[5] || " "}
       </td>
-      <td class="border border-dark text-center" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[6] || " "}
       </td>
-      <td class="border border-dark text-center" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[7] || " "}
       </td>
-      <td class="border border-dark text-center" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[8] || " "}
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[9] || " "}
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[10] || " "}
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center" style="width: 40px;" colspan="1">
       ${colorArray[11] || " "}
       </td>
       <td
@@ -174,10 +186,10 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark" colspan="3">
         Парт
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center " colspan="1">
         ${partArray[0] || " "}
       </td>
-      <td class="border border-dark text-center p-2" colspan="1">
+      <td class="border border-dark text-center " colspan="1">
       ${partArray[1] || " "}
       </td>
       <td class="border border-dark text-center" colspan="1">
@@ -212,7 +224,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       </td>
     </tr>
     <tr>
-      <td class="border border-dark p-2" colspan="1">
+      <td class="border border-dark " colspan="1">
         1
       </td>
       <td class="border border-dark " colspan="2">
@@ -223,7 +235,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
         1
       )}.${accompaniments.knitter.firstName}</td>
       <td class="border border-dark text-center" colspan="3"></td>
-      <td class="border border-dark p-2" colspan="4" rowspan="3">
+      <td class="border border-dark " colspan="4" rowspan="3">
         Сүлжигчийн чанар шалгагч
       </td>
       <td class="border border-dark text-center" colspan="4">
@@ -231,7 +243,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       </td>
     </tr>
     <tr>
-      <td class="border border-dark  p-2" colspan="1">
+      <td class="border border-dark  " colspan="1">
         2
       </td>
       <td class="border border-dark" colspan="2">
@@ -249,7 +261,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1"></td>
     </tr>
     <tr>
-      <td class="border border-dark  p-2" colspan="1">
+      <td class="border border-dark  " colspan="1">
         3
       </td>
       <td class="border border-dark " colspan="2">
@@ -267,7 +279,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1"></td>
     </tr>
     <tr>
-      <td class="border border-dark p-2" colspan="1">
+      <td class="border border-dark " colspan="1">
         4
       </td>
       <td class="border border-dark " colspan="2">
@@ -290,7 +302,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1"></td>
     </tr>
     <tr>
-      <td class="border border-dark p-2" colspan="1">
+      <td class="border border-dark " colspan="1">
         5
       </td>
       <td class="border border-dark " colspan="2">
@@ -306,7 +318,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1"></td>
     </tr>
     <tr>
-      <td class="border border-dark  p-2" colspan="1">
+      <td class="border border-dark  " colspan="1">
         6
       </td>
       <td class="border border-dark " colspan="2">
@@ -322,10 +334,10 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1"></td>
     </tr>
     <tr>
-      <td class="border border-dark p-2" colspan="1">
+      <td class="border border-dark text-center" colspan="1">
         7
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Шидээс
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -341,7 +353,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         8
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Тууз
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -357,7 +369,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         9
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Эмжээр
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -373,7 +385,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         10
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Халаас
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -389,7 +401,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         11
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Гар оёо
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -467,7 +479,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         15
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Нөхөн засвар
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -483,7 +495,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         16
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Шулуун оёо
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -499,7 +511,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         17
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Нүхлэх
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -515,7 +527,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         18
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Товч хадах
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -524,7 +536,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         19
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Нөхөн засвар
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -540,7 +552,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
       <td class="border border-dark text-center" colspan="1">
         20
       </td>
-      <td class="border border-dark text-center" colspan="2">
+      <td class="border border-dark" colspan="2">
         Индүү гоёл
       </td>
       <td class="border border-dark text-center" colspan="6"></td>
@@ -571,7 +583,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
         colspan="6"
         rowspan="3"
       >
-        ${orders.daimond}
+        ${orders.daimond || ""}
       </td>
       <td class="border border-dark text-center" colspan="2">
         Загвар
@@ -620,9 +632,9 @@ const AccompHtml = async ({ order, accompaniment }) => {
   </table>
   <div class="text-center">
     <img
-      src="http://localhost:8001/upload/style/style_08a7851d-cb3a-4382-9730-877ec4208ad7.jpg"
-      height="100px"
-      width="100px"
+      src="https://boostersback.com/upload/style/style_08a7851d-cb3a-4382-9730-877ec4208ad7.jpg"
+      height="150px"
+      width="150px"
       style="margin-top: 20px"
     />
   </div>

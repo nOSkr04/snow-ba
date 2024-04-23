@@ -41,7 +41,10 @@ const Style = new mongoose.Schema({
     type: String,
     required: [true, "Парт заавал оруулна уу"],
   },
-  image: String,
+  image: {
+    type: String,
+    default: "no-image.jpg",
+  },
   createUser: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

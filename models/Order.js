@@ -32,7 +32,7 @@ const Order = new mongoose.Schema({
   orderType: {
     type: String,
     required: [true, "Захиалгын төрөл оруулна уу"],
-    enum: ["repair", "mass", "excitement"],
+    enum: ["repair", "mass", "excitement", "repetition"],
   },
   order: {
     type: String,

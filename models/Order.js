@@ -171,32 +171,27 @@ const Order = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  executiveProcessUser: [
-    {
-      user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-      quantity: Number,
-      accompaniment: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Accompaniment",
-      },
-    },
-  ],
-  executiveCompleteUser: [
-    {
-      user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-      quantity: Number,
-      accompaniment: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Accompaniment",
-      },
-    },
-  ],
+  executiveDoneWeight: {
+    type: Number,
+    default: 0,
+  },
+  executivingStatus: {
+    type: String,
+    default: "waiting",
+    enum: ["waiting", "working", "done"],
+  },
+  executiveDoneResidualCount: {
+    type: Number,
+    default: 0,
+  },
+  executiveDoneGrantedCount: {
+    type: Number,
+    default: 0,
+  },
+  executiveDoneCompletedCount: {
+    type: Number,
+    default: 0,
+  },
   createUser: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

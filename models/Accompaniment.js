@@ -28,11 +28,19 @@ const AccompanimentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  availableDoneExecutive: {
+    type: Boolean,
+    default: false,
+  },
   availableKnit: {
     type: Boolean,
     default: false,
   },
   executiveStatus: {
+    type: String,
+    enum: ["working", "done"],
+  },
+  executiveDoneStatus: {
     type: String,
     enum: ["working", "done"],
   },
@@ -51,6 +59,10 @@ const AccompanimentSchema = new mongoose.Schema({
     default: 0,
   },
   executiveWeight: {
+    type: String,
+    default: 0,
+  },
+  executiveDoneWeight: {
     type: String,
     default: 0,
   },

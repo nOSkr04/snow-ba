@@ -9,6 +9,7 @@ import {
   knitAccompaniment,
   sewAccompaniment,
   executiveAccompaniment,
+  executiveDoneAccompaniment,
 } from "../controller/accompaniments.js";
 const router = Router();
 
@@ -30,6 +31,14 @@ router
     protect,
     authorize("admin", "executive-manager"),
     executiveAccompaniment
+  );
+
+router
+  .route("/:id/executiveDone")
+  .post(
+    protect,
+    authorize("admin", "executive-manager"),
+    executiveDoneAccompaniment
   );
 
 router

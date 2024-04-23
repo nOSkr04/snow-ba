@@ -295,22 +295,11 @@ export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
   order.executiveWeight =
     Number(order.executiveWeight) + Number(executiveWeight);
   order.completed = Number(order.completed) + Number(accompaniment.quantity);
-  const removeProcessExecutive = order.executiveProcessUser.filter(
-    (executive) => executive.accompaniment !== id
-  );
 
-  order.executiveProcessUser = removeProcessExecutive;
-  order.executiveCompleteUser = [
-    ...order.executiveCompleteUser,
-    {
-      quantity: accompaniment.quantity,
-      accompaniment: accompaniment._id,
-    },
-  ];
-
-  accompaniment.status = "done";
   accompaniment.executiveStatus = "done";
   accompaniment.executiveWeight = executiveWeight;
+  accompaniment.executiveDoneStatus = "working";
+  accompaniment.availableDoneExecutive = true;
   accompaniment.save();
   order.save();
 
@@ -319,3 +308,48 @@ export const executiveAccompaniment = asyncHandler(async (req, res, next) => {
     data: accompaniment,
   });
 });
+
+export const executiveDoneAccompaniment = asyncHandler(
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { executiveDoneWeight } = req.body;
+    const accompaniment = await Accompaniment.findById(id);
+
+    if (!accompaniment) {
+      throw new MyError(id + " ID-тэй дагалдах байхгүй байна.", 404);
+    }
+
+    if (
+      accompaniment.status === "done" ||
+      accompaniment.executiveDoneStatus === "done"
+    ) {
+      throw new MyError("Хүлээн авсан байна", 400);
+    }
+
+    if (!accompaniment.order) {
+      throw new MyError("Дагалдахад захиалга олдсонгүй", 400);
+    }
+
+    const order = await Order.findById(accompaniment.order);
+    order.executiveDoneGrantedCount =
+      Number(order.executiveDoneGrantedCount) - Number(accompaniment.quantity);
+    order.executiveDoneCompletedCount =
+      Number(order.executiveDoneCompletedCount) +
+      Number(accompaniment.quantity);
+    order.executiveDoneWeight =
+      Number(order.executiveDoneWeight) + Number(executiveDoneWeight);
+    order.completed = Number(order.completed) + Number(accompaniment.quantity);
+
+    // accompaniment.status = "done";
+    order.status = "done";
+    accompaniment.executiveDoneStatus = "done";
+    accompaniment.executiveDoneWeight = executiveDoneWeight;
+    accompaniment.save();
+    order.save();
+
+    res.status(200).json({
+      success: true,
+      data: accompaniment,
+    });
+  }
+);

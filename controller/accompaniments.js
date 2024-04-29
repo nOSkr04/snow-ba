@@ -185,7 +185,7 @@ export const knitAccompaniment = asyncHandler(async (req, res, next) => {
   const order = await Order.findById(accompaniment.order);
   order.knitGrantedCount = order.knitGrantedCount - accompaniment.quantity;
   order.knitCompletedCount = order.knitCompletedCount + accompaniment.quantity;
-  order.knitWeight = order.knitWeight + req.body.knitWeight;
+  order.knitWeight = order.knitWeight + Number(req.body.knitWeight);
   order.sewGrantedCount = order.sewGrantedCount + accompaniment.quantity;
   const removeProcessKnitter = order.knitProcessUser.filter(
     (knitter) => knitter.accompaniment !== id
@@ -331,8 +331,8 @@ export const executiveDoneAccompaniment = asyncHandler(
     }
 
     const order = await Order.findById(accompaniment.order);
-    order.executiveDoneGrantedCount =
-      Number(order.executiveDoneGrantedCount) - Number(accompaniment.quantity);
+    // order.executiveDoneGrantedCount =
+    //   Number(order.executiveDoneGrantedCount) - Number(accompaniment.quantity);
     order.executiveDoneCompletedCount =
       Number(order.executiveDoneCompletedCount) +
       Number(accompaniment.quantity);

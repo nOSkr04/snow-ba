@@ -8,6 +8,7 @@ import {
   deleteOrder,
   updateOrder,
   createOrderDetail,
+  dashboardOrder,
 } from "../controller/orders.js";
 
 const router = Router();
@@ -16,7 +17,7 @@ const router = Router();
 router.route("/detail").get(createOrderDetail);
 router
   .route("/")
-  .get(protect, getOrders)
+  .get(protect, getOrders, dashboardOrder)
   .post(protect, authorize("admin", "order-manager"), createOrder);
 
 router

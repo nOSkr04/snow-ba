@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import Client from "../models/Client.js";
 import Style from "../models/Style.js";
+import { create } from "domain";
 // api/v1/orders
 export const getOrders = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -180,5 +181,75 @@ export const uploadOrderPhoto = asyncHandler(async (req, res, next) => {
       success: true,
       data: file.name,
     });
+  });
+});
+export const dashboardOrder = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({ order: { $ne: done } });
+  const orderCount = await Order.countDocuments();
+
+  const knitWeight = orders.reduce((acc, item) => acc + item.knitWeight, 0);
+  const knitCompletedCount = orders.reduce(
+    (acc, item) => acc + item.knitCompletedCount,
+    0
+  );
+  const sewCompletedCount = orders.reduce(
+    (acc, item) => acc + item.sewCompletedCount,
+    0
+  );
+  const executiveWeight = orders.reduce(
+    (acc, item) => acc + item.executiveWeight,
+    0
+  );
+  const knitGrantedCount = orders.reduce(
+    (acc, item) => acc + item.knitGrantedCount,
+    0
+  );
+  const sewGrantedCount = orders.reduce(
+    (acc, item) => acc + item.sewGrantedCount,
+    0
+  );
+  const sewWeight = orders.reduce((acc, item) => acc + item.sewWeight, 0);
+  const sewResidualCount = orders.reduce(
+    (acc, item) => acc + item.sewResidualCount,
+    0
+  );
+  const executiveCompletedCount = orders.reduce(
+    (acc, item) => acc + item.executiveCompletedCount,
+    0
+  );
+  const executiveDoneWeight = orders.reduce(
+    (acc, item) => acc + item.executiveDoneWeight,
+    0
+  );
+  const executiveDoneGrantedCount = orders.reduce(
+    (acc, item) => acc + item.executiveDoneGrantedCount,
+    0
+  );
+  const executiveResidualCount = orders.reduce(
+    (acc, item) => acc + item.executiveResidualCount,
+    0
+  );
+  const executiveDoneCompletedCount = orders.reduce(
+    (acc, item) => acc + item.executiveDoneCompletedCount,
+    0
+  );
+  res.status(200).json({
+    success: true,
+    data: {
+      orderCount,
+      knitWeight,
+      knitCompletedCount,
+      sewCompletedCount,
+      executiveWeight,
+      knitGrantedCount,
+      sewGrantedCount,
+      sewWeight,
+      sewResidualCount,
+      executiveCompletedCount,
+      executiveDoneWeight,
+      executiveDoneGrantedCount,
+      executiveResidualCount,
+      executiveDoneCompletedCount,
+    },
   });
 });

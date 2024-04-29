@@ -1,6 +1,11 @@
 import moment from "moment";
 import Order from "../models/Order.js";
 import Accompaniment from "../models/Accompaniment.js";
+import fs from "fs";
+import axios from "axios";
+import path from "path";
+import JsBarcode from "jsbarcode";
+import { createCanvas } from "canvas";
 const AccompHtml = async ({ order, accompaniment }) => {
   const orders = await Order.findById(order).populate([
     "size",
@@ -18,6 +23,32 @@ const AccompHtml = async ({ order, accompaniment }) => {
       populate: ["style"],
     },
   ]);
+  const canvas = createCanvas();
+
+  // Generate the barcode
+  JsBarcode(canvas, accompaniments.barcode, {
+    format: "CODE128",
+    width: 2,
+    height: 50,
+    displayValue: true,
+    textMargin: 10,
+  });
+
+  // Convert the canvas to an HTML string
+  const barcodeHtml = canvas.toDataURL("image/png");
+  const base64Data = barcodeHtml.split(",")[1];
+  // const data = barcodeHtml.replace(/^data:image\/\w+;base64,/, "");
+  console.log("barcodeHtml", barcodeHtml);
+
+  // console.log("base64Data", base64Data);
+  // async function getBase64(url) {
+  //   const response = await axios.get(url, { responseType: "arraybuffer" });
+  //   const base64 = Buffer.from(response.data, "binary").toString("base64");
+  //   return base64;
+  // }
+
+  // const imageUrl = "http://example.com/image.png"; // replace with your image URL
+  // getBase64(imageUrl).then(console.log);
 
   const color = orders.style.colorCode;
   const part = orders.style.partNomer;
@@ -85,7 +116,7 @@ const AccompHtml = async ({ order, accompaniment }) => {
         height="50px"
       >
       <img
-      src="https://boostersback.com/upload/barcode.png"
+      src=${barcodeHtml}
       alt="Header Avatar"
       height="50px"
       width="100px"

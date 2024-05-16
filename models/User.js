@@ -6,9 +6,11 @@ import jwt from "jsonwebtoken";
 const UserSchema = new mongoose.Schema({
   lastName: {
     type: String,
+    required: [true, "Хэрэглэгчийн овогийг оруулнуу!"],
   },
   firstName: {
     type: String,
+    required: [true, "Хэрэглэгчийн нэрийг оруулнуу!"],
   },
   avatar: {
     type: String,
@@ -20,7 +22,7 @@ const UserSchema = new mongoose.Schema({
   phone: {
     type: String,
     unique: true,
-    required: [true, "Хэрэглэгчийн нэрийг оруулна уу"],
+    required: [true, "Хэрэглэгчийн утасыг оруулна уу"],
   },
   email: {
     type: String,
@@ -48,6 +50,7 @@ const UserSchema = new mongoose.Schema({
       "part-timer",
       "factory-foreman",
       "kittelchin",
+      "assistant-snipper",
     ],
     default: "user",
   },

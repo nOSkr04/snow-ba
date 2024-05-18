@@ -14,15 +14,12 @@ const router = Router();
 
 router.route("/image").post(uploadStylePhoto);
 //"/api/v1/styles"
-router
-  .route("/")
-  .get(protect, getStyles)
-  .post(protect, authorize("admin", "order-manager"), createStyle);
+router.route("/").get(protect, getStyles).post(protect, createStyle);
 
 router
   .route("/:id")
   .get(getStyle)
-  .delete(protect, authorize("admin", "order-manager"), deleteStyle)
-  .put(protect, authorize("admin", "order-manager"), updateStyle);
+  .delete(protect, deleteStyle)
+  .put(protect, updateStyle);
 
 export default router;

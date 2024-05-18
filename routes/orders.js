@@ -18,7 +18,7 @@ router.route("/detail").get(createOrderDetail);
 router
   .route("/")
   .get(protect, getOrders, dashboardOrder)
-  .post(protect, authorize("admin", "order-manager"), createOrder);
+  .post(protect, createOrder);
 
 router
   .route("/:id")

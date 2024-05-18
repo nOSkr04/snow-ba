@@ -15,7 +15,7 @@ const router = Router();
 router
   .route("/")
   .get(protect, getStyleSettings)
-  .post(protect, authorize("admin", "operator", "user"), createStyleSetting);
+  .post(protect, createStyleSetting);
 
 router
   .route("/:id")
